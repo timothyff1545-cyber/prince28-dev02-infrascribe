@@ -1,0 +1,30 @@
+
+[
+  {
+    "id": "001",
+    "resource_type": "aws_security_group",
+    "argument": "ingress.from_port",
+    "required": "true",
+    "version_added": "",
+    "deprecated_in": "",
+    "service": "VPC"
+  },
+  {
+    "id": "002",
+    "resource_type": "aws_s3_bucket",
+    "argument": "bucket",
+    "required": "false",
+    "version_added": "",
+    "deprecated_in": "",
+    "service": "S3"
+  },
+  {
+    "id": "003",
+    "resource_type": "aws_s3_bucket",
+    "argument": "acl",
+    "required": "false",
+    "version_added": "",
+    "deprecated_in": "Deprecated - exact version unspecified",
+    "service": "S3"
+  }
+]
