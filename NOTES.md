@@ -12,9 +12,9 @@
 ### The loader is idempotent
 
 ```text
-run 1: paste here
-run 2: paste here
-run 3 (after editing one record): paste here
+records=3 inserted=3 updated=0 unchanged=0
+records=3 inserted=0 updated=0 unchanged=3
+records=3 inserted=0 updated=1 unchanged=2
 ```
 
 ### EXPLAIN for ?resource_type=VALUE
@@ -47,4 +47,8 @@ Execution Time: 1.666 ms
 
 Why did the planner choose a Seq Scan on my table? (2 lines, your own words)
 
+The table contains very few records, so PostgreSQL estimates that scanning the entire table is cheaper than using the GIN index.
+Using an index also has additional lookup overhead, which is unnecessary for such a small table.
+
 When would it switch to the GIN index? (1 line)
+When the table grows and the query becomes selective enough that using the GIN index is estimated to be cheaper than scanning the entire table.
