@@ -1,4 +1,10 @@
 # InfraScribe
+[![CI](https://github.com/timothyff1545-cyber/prince28-dev02-infrascribe/actions/workflows/ci.yml/badge.svg)](https://github.com/timothyff1545-cyber/prince28-dev02-infrascribe/actions/workflows/ci.yml)
+[![Live](https://img.shields.io/website?url=https%3A%2F%2Fprince28-dev02-infrascribe-main.onrender.com%2Fhealth&label=live)](https://prince28-dev02-infrascribe-main.onrender.com/docs)
+[![Uptime (30 days)](https://img.shields.io/uptimerobot/ratio/YOUR-MONITOR-KEY)](https://prince28-dev02-infrascribe-main.onrender.com/health)
+
+**Live:** https://prince28-dev02-infrascribe-main.onrender.com · [API docs](https://prince28-dev02-infrascribe-main.onrender.com/docs) · [health](https://prince28-dev02-infrascribe-main.onrender.com/health)
+
 
 A Terraform assistant for AWS that answers resource and argument questions from the provider docs and returns HCL that passes validation.
 
