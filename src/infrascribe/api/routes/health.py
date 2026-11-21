@@ -8,7 +8,7 @@ router = APIRouter(tags=["health"])
 @router.head("/health", include_in_schema=False)
 def health_head() -> Response:
     """Liveness: is the process alive? Instant. Never touches the DB or the LLM."""
-    return Response(status_code=200)
+    return Response(status_code=404)
 
 
 @router.get("/health")
