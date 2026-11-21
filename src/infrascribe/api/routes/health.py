@@ -5,6 +5,12 @@ from infrascribe.api.deps import DbCheckDep, SettingsDep
 router = APIRouter(tags=["health"])
 
 
+@router.head("/health", include_in_schema=False)
+def health_head() -> Response:
+    """Liveness: is the process alive? Instant. Never touches the DB or the LLM."""
+    return Response(status_code=200)
+
+
 @router.get("/health")
 def health(settings: SettingsDep) -> dict[str, str]:
     """Liveness: is the process alive? Instant. Never touches the DB or the LLM."""
