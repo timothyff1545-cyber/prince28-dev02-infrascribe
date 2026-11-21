@@ -5,7 +5,7 @@ from infrascribe.api.deps import DbCheckDep, SettingsDep
 router = APIRouter(tags=["health"])
 
 
-@router.get("/health")
+@router.api_route("/health", methods=["GET", "HEAD"])
 def health(settings: SettingsDep) -> dict[str, str]:
     """Liveness: is the process alive? Instant. Never touches the DB or the LLM."""
     return {
@@ -16,7 +16,7 @@ def health(settings: SettingsDep) -> dict[str, str]:
     }
 
 
-@router.get("/ready")
+@router.api_route("/ready", methods=["GET", "HEAD"])
 async def ready(db_ok: DbCheckDep, response: Response) -> dict:
     """Readiness: can this instance serve traffic right now?"""
     checks = {"database": db_ok}
