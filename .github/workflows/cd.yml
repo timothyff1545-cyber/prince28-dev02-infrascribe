@@ -54,7 +54,7 @@ jobs:
           IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:sha-${SHA}"
           ENCODED=$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$IMAGE")
           echo "Deploying $IMAGE"
-          curl --fail --silent --show-error -X POST "${HOOK}&imgURL=${ENCODED}"
+          curl --fail-with-body --silent --show-error -X POST "${HOOK}&imgURL=${ENCODED}"
 
       - name: Smoke test the live URL
         run: uv run python scripts/smoke.py "${{ vars.LIVE_URL }}" --expect-version "${SHA}"
