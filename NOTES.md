@@ -89,30 +89,39 @@ The rollback only changes the application version; it does not reverse database 
 ## D06 · Collecting the corpus
 
 - Start target: 200 most-used resource pages
-- Collected today: ___ files, ___ pages, ___ MB (from DATASET.md)
-- Doors used: URL list / Git repository / sitemap / by hand (keep the ones I used)
+- Collected today: **735 files, 774 measured pages, 7.2 MB measured size** (707 files were measurable by `dataset_report.py`; 28 files were not measured)
+- Doors used: **URL list, Git repository**
 
 ### Licence check
 
 | Source | Licence or terms, in my words | May I show full text in answers? |
 |---|---|---|
-| | | |
+| HashiCorp AWS Terraform provider GitHub repository | MPL-2.0 applies to covered repository files. Preserve licence and copyright notices and verify file coverage. | Only where permitted by the applicable licence; verify coverage before displaying full text. |
+| Terraform Registry | Registry Terms restrict automated crawling and certain copying or storage of content. | No, not without checking the applicable terms and obtaining permission where required. |
 
 ### robots.txt
 
-- Site: ________ . Its robots.txt says (2 lines): ________
-- Was anything blocked for my bot? What did I do about it?
+- Site: **Terraform Registry**. Its robots.txt says:
+  ```
+  User-agent: *
+  Disallow:
+  ```
+- Was anything blocked for my bot? **The Registry robots.txt did not disallow paths under this rule. However, its Terms still restrict scraping, so robots.txt permission alone does not authorize automated collection.**
 
 ### Kill and resume
 
-- Run 1: I pressed Ctrl+C after ___ files
-- Run 2: downloaded=___ skipped=___
-- Run 3: downloaded=0 skipped=___
+- Run 1: I pressed Ctrl+C after **[10]** files.
+- Run 2: downloaded=**[10]** skipped=**[0]**
+- Run 3: downloaded=**0** skipped=**[10]**
 
 ### Capacity (from docs/CAPACITY.md)
 
-- Tokens per page, measured: ___
-- Full corpus: ___ M tokens, ___ chunks, embedding about Rs ___, vectors ___ MB
-- The number that surprised me most, and why (2 lines):
+- Tokens per page, measured: **750**
+- Full corpus: **2.46 M tokens, 7,082 chunks, embedding about Rs 40, vectors 22 MB**
+- The number that surprised me most, and why:
+  The estimated embedding cost was only around Rs 40 for 3,000 files.
+  This is affordable for the initial version of InfraScribe, even as the documentation corpus grows.
 
 ### One thing that went wrong today, and how I fixed it
+
+The dataset report measured only 707 files, while 735 files were physically present in `data/raw/`. I checked the source folders and file extensions to investigate the difference. The report did not measure 28 files, so I distinguished the physical file count from the measurable file count instead of treating them as the same.
