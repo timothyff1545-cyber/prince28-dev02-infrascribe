@@ -125,3 +125,52 @@ The rollback only changes the application version; it does not reverse database 
 ### One thing that went wrong today, and how I fixed it
 
 The dataset report measured only 707 files, while 735 files were physically present in `data/raw/`. I checked the source folders and file extensions to investigate the difference. The report did not measure 28 files, so I distinguished the physical file count from the measurable file count instead of treating them as the same.
+
+## D07 · Parser comparison
+
+<!-- parsers:start -->
+| File | Parsers (A / B) | Pages | A found | B found | Time (A / B) | Better, why |
+|---|---|---|---|---|---|---|
+| lambda-function-html-a2c107d6.html | trafilatura / strip tags | 12 | 31,441 chars, 0 headings, 1 tables | 35,361 chars, 33 headings, 0 tables | 0.23 s / 0.01 s | |
+| db-instance-html-063b52f5.html | trafilatura / strip tags | 7 | 35,812 chars, 0 headings, 1 tables | 38,624 chars, 10 headings, 0 tables | 0.16 s / 0.01 s | |
+| instance-html-b589d836.html | trafilatura / strip tags | 12 | 34,909 chars, 0 headings, 1 tables | 37,385 chars, 1 headings, 0 tables | 0.14 s / 0.01 s | |
+| s3-bucket-html-dc92e79b.html | trafilatura / strip tags | 10 | 29,524 chars, 0 headings, 1 tables | 32,137 chars, 1 headings, 0 tables | 0.11 s / 0.01 s | |
+| dynamodb-table-html-8df4ac4b.html | trafilatura / strip tags | 9 | 21,233 chars, 0 headings, 1 tables | 24,195 chars, 3 headings, 0 tables | 0.15 s / 0.01 s | |
+| security-group-html-d88c84fc.html | trafilatura / strip tags | 8 | 16,778 chars, 7 headings, 1 tables | 19,636 chars, 13 headings, 0 tables | 0.11 s / 0.01 s | |
+| iam-role-html-c7a4fd86.html | trafilatura / strip tags | 5 | 10,220 chars, 0 headings, 1 tables | 13,162 chars, 3 headings, 0 tables | 0.09 s / 0.01 s | |
+| subnet-html-c67f55b4.html | trafilatura / strip tags | 4 | 9,025 chars, 0 headings, 1 tables | 11,864 chars, 1 headings, 0 tables | 0.08 s / 0.01 s | |
+| vpc-html-ab2ba283.html | trafilatura / strip tags | 3 | 7,390 chars, 0 headings, 1 tables | 10,072 chars, 1 headings, 0 tables | 0.07 s / 0.00 s | |
+| ebs-volume-html-427fc811.html | trafilatura / strip tags | 2 | 3,636 chars, 0 headings, 1 tables | 6,322 chars, 0 headings, 0 tables | 0.06 s / 0.00 s | |
+<!-- parsers:end -->
+
+### D07 · Parsing my corpus
+
+- Files in the raw corpus: **735 · measurable by dataset report: 707 · parsed: parsing summary not yet recorded · failed: parsing summary not yet recorded · pages in Postgres: not yet verified**
+- Parsing coverage: **Not yet measured; requires the parsing summary.**
+
+### Failures by reason
+
+| Reason | Files | What I did |
+|---|---:|---|
+| no_text_layer | Not yet counted | Scanned PDFs require OCR |
+| corrupt | Not yet counted | Record the failure for investigation or replacement |
+| unsupported_type | Not yet counted | Identify unsupported formats and skip or convert them |
+| empty | Not yet counted | Check whether the source file contains readable content |
+
+- The one I fixed: file *models.py*, reason *Ruff formatting error*, fix: *ran `uv run ruff format .` and verified using `uv run poe lint`.*
+
+### What I saw when I read my parsed pages
+
+- A page where the heading path is right (document, page, path): **Fever Guidelines, page 2, [Fever Guidelines, Dengue] (verified by the parser unit test).**
+- Something that came out wrong (document, page, what): **HTML extraction can include extra characters or unwanted content when using simple HTML tag stripping.**
+- A table: Markdown grid or loose text? (document, page): **Markdown grid (verified by the PDF parser unit test).**
+
+### My parser choice
+
+- For PDFs I use *PyMuPDF* because it detects font sizes and can identify headings and tables. The unit tests also confirm that PyMuPDF and pypdf agree on the page count of a three-page test PDF.
+- For HTML documents, I prefer *Trafilatura* over simple tag stripping because it extracts main article content and removes navigation, scripts and footer content. In my comparison, it detected tables in all 10 tested documents, while simple tag stripping detected none.
+- A kind of document in my corpus that neither parser handles well: **Scanned PDFs without a text layer; they require OCR.**
+
+### One thing that went wrong today, and how I fixed it
+
+Ruff reported a formatting issue in `src/infrascribe/db/models.py` after adding the headings column and ParseFailure model. I fixed it using `uv run ruff format .` and confirmed that `uv run poe lint` passed.
