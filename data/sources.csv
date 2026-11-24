@@ -1,0 +1,20 @@
+# Sources for InfraScribe. One row per file to download. Lines starting with # are notes.
+# Start target: 200 most-used resource pages
+# Where to look:
+#   https://github.com/hashicorp/terraform-provider-aws
+#   https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+# Terms on my project card: Provider docs are MPL-2.0 in the repository.
+
+
+# Sources for InfraScribe
+url,source,licence,title
+https://github.com/hashicorp/terraform-provider-aws/blob/main/website/docs/r/s3_bucket.html.markdown,hashicorp,MPL-2.0,AWS S3 Bucket Resource
+https://github.com/hashicorp/terraform-provider-aws/blob/main/website/docs/r/instance.html.markdown,hashicorp,MPL-2.0,AWS EC2 Instance Resource
+https://github.com/hashicorp/terraform-provider-aws/blob/main/website/docs/r/vpc.html.markdown,hashicorp,MPL-2.0,AWS VPC Resource
+https://github.com/hashicorp/terraform-provider-aws/blob/main/website/docs/r/subnet.html.markdown,hashicorp,MPL-2.0,AWS Subnet Resource
+https://github.com/hashicorp/terraform-provider-aws/blob/main/website/docs/r/security_group.html.markdown,hashicorp,MPL-2.0,AWS Security Group Resource
+https://github.com/hashicorp/terraform-provider-aws/blob/main/website/docs/r/ebs_volume.html.markdown,hashicorp,MPL-2.0,AWS EBS Volume Resource
+https://github.com/hashicorp/terraform-provider-aws/blob/main/website/docs/r/lambda_function.html.markdown,hashicorp,MPL-2.0,AWS Lambda Function Resource
+https://github.com/hashicorp/terraform-provider-aws/blob/main/website/docs/r/dynamodb_table.html.markdown,hashicorp,MPL-2.0,AWS DynamoDB Table Resource
+https://github.com/hashicorp/terraform-provider-aws/blob/main/website/docs/r/iam_role.html.markdown,hashicorp,MPL-2.0,AWS IAM Role Resource
+https://github.com/hashicorp/terraform-provider-aws/blob/main/website/docs/r/db_instance.html.markdown,hashicorp,MPL-2.0,AWS RDS Instance Resource
