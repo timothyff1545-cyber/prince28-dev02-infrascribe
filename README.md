@@ -5,10 +5,11 @@
 
 **Live:** https://prince28-dev02-infrascribe-main.onrender.com · [API docs](https://prince28-dev02-infrascribe-main.onrender.com/docs) · [health](https://prince28-dev02-infrascribe-main.onrender.com/health)
 
+YOUR_MONITOR_KEY =m804746263-4e6d1f486386e4124db92038
 
 A Terraform assistant for AWS that answers resource and argument questions from the provider docs and returns HCL that passes validation.
 
-**Status:** Day 1 foundation (FastAPI skeleton, quality gates). Live URL from Day 5.
+**Status:** Week 1 complete · live at https://prince28-dev02-infrascribe-main.onrender.com
 
 ## Who it's for
 
