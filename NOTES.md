@@ -69,9 +69,10 @@ paste the last 4 lines of the "Smoke test the live URL" step
 
 ### Rollback drill
 
-- Rolled back to sha ________ : started __:__, smoke passed __:__ (___ min)
-- Rolled forward to sha ________ : ___ min
+- Rolled back to sha daefe525aad9276f85217c317bc3b4b2688de2e7: started 12:00, smoke passed 12:04 (4 min)
+- Rolled forward to sha 1ea1f9f4e52e7b935fbc4f8d5311792a487d9a29: 5 min
 - During the rollback, the database stayed on the newer schema. Why is that safe here? (2 lines)
+The rollback only changes the application version; it does not reverse database migrations. The older application can continue working because the newer schema retains the fields and tables it needs.
 
 ### Where my secrets live
 
@@ -82,3 +83,4 @@ paste the last 4 lines of the "Smoke test the live URL" step
 
 - UptimeRobot checks /health every 5 minutes; alerts go to my email.
 - One thing that would make my live app faster on its first request: (1 line)
+ Keep the application warm using a scheduled health check to reduce cold-start delays.
