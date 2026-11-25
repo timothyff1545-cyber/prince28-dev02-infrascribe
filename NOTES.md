@@ -174,3 +174,78 @@ The dataset report measured only 707 files, while 735 files were physically pres
 ### One thing that went wrong today, and how I fixed it
 
 Ruff reported a formatting issue in `src/infrascribe/db/models.py` after adding the headings column and ParseFailure model. I fixed it using `uv run ruff format .` and confirmed that `uv run poe lint` passed.
+
+
+# D08 · LLM gateway
+
+- **Primary:** `gemini-3.8-flash` (Gemini)
+- **Fallback:** `openai/gpt-oss-20b` (Groq)
+- **Gateway:** `LLMGateway` handles retries, fallback, circuit breaking, token tracking, latency and cost recording.
+
+### First questions on my laptop
+
+| Test | Provider / model | Total time | Tokens in | Tokens out | Cost (Rs) | Fallback |
+|---|---|---:|---:|---:|---:|---|
+| Hello! How can I help you with Terraform for AWS today? | Groq / `openai/gpt-oss-20b` | 16.35 s | 226 | 59 | 0.003292 | Yes |
+| Refund definition | Groq / `openai/gpt-oss-20b` | 28.79 s | 234 | 66 | 0.003548 | Yes |
+| Off-topic question | Groq / `openai/gpt-oss-20b` | 13.98 s | 248 | 87 | 0.004246 | Yes |
+
+- **First words after:** Not recorded in these outputs.
+- **Same question on live URL:** Not recorded yet. Day 1 target: under 1.5 s.
+
+### Tokens: English against Tamil
+
+| Message | Tokens in |
+|---|---:|
+| "Hi" (baseline: mostly my system prompt) | ___ |
+| The English sentence | ___ |
+| The same sentence in Tamil | ___ |
+
+- The Tamil message needs about ___ times the tokens of the English one.
+- The three measurements above are different questions, so they cannot establish an English-versus-Tamil token ratio.
+
+### What the model does without my documents
+
+- **Question 6 ("How much is our AWS bill this month?"):** Not tested yet.
+- **Exact words:** ___
+- **A detail it got wrong or invented:** The refund question received a general definition of a refund, despite being outside the Terraform assistant's intended scope.
+- **Off-topic question:** Yes, it declined in one sentence.
+
+Exact response:
+
+> I’m sorry, but that question is outside the scope of this Terraform assistant.
+
+### Fallback and circuit breaker
+
+- **With the primary broken:** Gemini → Groq.
+- **Fallback model:** `openai/gpt-oss-20b`.
+- **Observed:** All three supplied requests used Groq with `fallback=YES`.
+- **First words after:** Not recorded.
+- **The question at which "llm call gemini … error" stopped appearing in the log:** Number ___
+
+### The bill
+
+- **Three observed calls:** 3
+- **Total observed cost:** Rs 0.011086
+- **Average cost per answered question:** Rs 0.003695 (approximately)
+- **Day 1 target:** Under Rs 0.50 per answered question.
+- **Actual `/v1/usage` totals:** Calls ___, errors ___, fallbacks ___, cost Rs ___
+
+### One thing that went wrong today, and how I fixed it
+
+**Problem:** Four unit tests failed when running `uv run poe test`:
+- Three chat API tests returned HTTP 503 instead of HTTP 200.
+- The usage API test returned HTTP 500 because it attempted a real PostgreSQL connection.
+
+**Root cause:** `tests/unit/conftest.py` contained its own `client` fixture. It took precedence over the parent fixture in `tests/conftest.py`, but did not override `get_gateway` and `get_usage_repo`.
+
+**Fix:** Updated `tests/unit/conftest.py` to include:
+- A `FakeLLM` fixture and `get_gateway` dependency override.
+- A `FakeUsage` class and `get_usage_repo` dependency override.
+
+**Additional lint and formatting fixes:**
+- Fixed Ruff import ordering using `uv run ruff check tests/unit/conftest.py --fix`.
+- Three files needed formatting: `config.py`, `models.py` and `tests/unit/conftest.py`.
+- Formatting command: `uv run ruff format .`
+
+**Verification:** Ruff lint passed (`All checks passed!`). Formatting verification was pending in the last shared output.
