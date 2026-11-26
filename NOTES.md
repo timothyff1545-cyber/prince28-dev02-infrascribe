@@ -249,3 +249,107 @@ Exact response:
 - Formatting command: `uv run ruff format .`
 
 **Verification:** Ruff lint passed (`All checks passed!`). Formatting verification was pending in the last shared output.
+
+## D09 · Prompt versions compared
+
+<!-- prompts:start -->
+
+| Prompt version | Correct | Accuracy | Invalid replies | Avg tokens in |
+|---|---|---|---|---|
+| classify_v1 | 14/21 | 67% | 0 | 114 |
+| classify_v2 | 20/21 | 95% | 0 | 265 |
+| classify_v3 | 21/21 | 100% | 0 | 385 |
+| classify_v4 | 21/21 | 100% | 0 | 558 |
+
+<!-- prompts:end -->
+# D09 · Prompts and structured output
+
+## Router prompt evaluation
+
+- **My best router prompt:** `classify_v3` and `classify_v4` — both achieved **21/21 (100%)**.
+- **What I changed in v4, and what happened to the score:**
+  I added more challenging examples covering multi-resource Terraform configurations, provider version changes, migration questions, live AWS infrastructure information, security configuration and prompt injection. V4 maintained the perfect 21/21 score achieved by V3. There was no measurable accuracy improvement, but V4 tested a wider range of question types.
+- **The question my best version still gets wrong (line, wanted, got), and why I think so:**
+  None. Both V3 and V4 classified all 21 evaluation questions correctly.
+- **A label in my test set that I changed after seeing the results:** None recorded.
+- **Input tokens per question:** V1 — not recorded; best version — not recorded. The extra accuracy cannot be calculated from token measurements. V4 maintained the same accuracy as V3 while testing more varied examples.
+
+### Router evaluation results
+
+| Prompt version | Correct | Accuracy |
+|---|---:|---:|
+| classify_v1 | 14/21 | 67% |
+| classify_v2 | 20/21 | 95% |
+| classify_v3 | 21/21 | 100% |
+| classify_v4 | 21/21 | 100% |
+
+**Classification errors observed:**
+
+- V1 incorrectly classified the IAM permissions question as `docs` instead of `personal`.
+- V1 incorrectly classified pet names, bicycle repair, Baahubali and jokes as Terraform-related or personal questions.
+- V1 treated a prompt-injection question as a documentation question.
+- V1 classified a live AWS security-group inspection request as `off_topic`.
+- V2 still incorrectly classified the AWS account cost question as `off_topic` instead of `personal`.
+
+**Model calls:** 42 calls were made for the current evaluation; the remaining results came from the cache. The detailed call breakdown is to be recorded in the table in `NOTES.md`.
+
+## My contract (DocMeta)
+
+- **Fields I kept from my project card:** Not recorded in the shared code/output. Need to verify the actual `DocMeta` schema.
+- **Fields I deleted, and why they make no sense per document:** Not recorded.
+- **The field I tightened, and how:** Not recorded.
+
+The purpose of `DocMeta` is to produce a validated metadata record for each parsed document, so metadata can be stored consistently in PostgreSQL and used by InfraScribe.
+
+## Extraction run
+
+- **Prompt version:** `extract_v1`
+- **Documents:** 3 successfully processed, 0 repaired, 0 failed. The command was run with `--limit 5`.
+- **Terminal summary:** `pending=5`, `ok=3`, `repaired=0`, `failed=0`.
+- **Not finished? Why, and how many are left:** The run stopped because Gemini returned HTTP 429 — current API quota exceeded. The terminal reported 5 pending records. Three were successfully processed. The exact remaining count should be confirmed from the extraction checkpoint/database before the next run.
+- **Most common failure reason, and what I did about it:** Gemini API quota exhaustion (HTTP 429). I checked Google AI Studio Usage and Rate Limits. The displayed Gemini 3.8 Flash usage was below the displayed limits, so the precise quota responsible still needs investigation.
+- **A record that was valid but wrong (document, field, what it said, what is true):** Not identified yet.
+- **Cost at list price:** Rs 0.1156 total for this run. Approximately Rs 0.0385 per successfully processed document (Rs 0.1156 / 3). This is an estimate based on the reported run cost.
+
+### Extraction usage
+
+| Metric | Result |
+|---|---:|
+| Input tokens | 6,765 |
+| Output tokens | 2,364 |
+| Estimated cost | Rs 0.1156 |
+| Execution time | 186 seconds |
+| Successfully processed | 3 |
+| Repaired | 0 |
+| Failed | 0 |
+| Pending reported | 5 |
+
+### Provider issue
+
+Gemini returned HTTP 429 with the message:
+
+`You exceeded your current quota, please check your plan and billing details.`
+
+The script waited 60 seconds and stopped because no model could answer.
+
+I investigated switching the extraction model to Groq. The extraction script uses `build_gateway()` and the shared LLM gateway, which currently configures Gemini as primary and Groq as fallback. The exact handling of HTTP 429 still needs to be checked in `gateway.py`.
+
+The Groq connectivity test succeeded with `openai/gpt-oss-20b`, responding with `pong` in 899 ms.
+
+The extraction script supports resuming unfinished work. I should verify its saved progress before rerunning it to ensure completed records are skipped.
+
+## One thing that went wrong today, and how I fixed it
+
+Gemini's free-tier API quota was exceeded while running metadata extraction.
+
+The command was:
+
+`uv run python scripts/extract_metadata.py --limit 5`
+
+Three documents were processed successfully, but the extraction stopped when Gemini returned HTTP 429. Waiting 60 seconds did not resolve the quota error.
+
+I checked Google AI Studio's Usage and Rate Limit pages. The displayed request, token and daily limits were not exhausted, so the exact quota issue remains under investigation.
+
+I also tested Groq independently. It responded successfully, proving that the Groq provider was reachable.
+
+**Next action:** Inspect the gateway's fallback handling for HTTP 429 and configure metadata extraction to use Groq without changing the primary model used by the normal chat application.
