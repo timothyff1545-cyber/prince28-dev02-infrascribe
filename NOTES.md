@@ -353,3 +353,35 @@ I checked Google AI Studio's Usage and Rate Limit pages. The displayed request, 
 I also tested Groq independently. It responded successfully, proving that the Groq provider was reachable.
 
 **Next action:** Inspect the gateway's fallback handling for HTTP 429 and configure metadata extraction to use Groq without changing the primary model used by the normal chat application.
+
+
+### D10 · Queue and worker
+
+- First run: ___ documents queued, finished in ___ s. Done ___ , skipped ___ , failed ___
+- Pace: ___ s per document (INGEST_RPM = ___ , INGEST_CONCURRENCY = ___ )
+
+### Kill test
+
+- Queued: 20. At the kill: queued ___ , running ___ , done ___ , failed ___
+- After the new worker: done ___ + skipped ___ + failed ___ = ___ (must be 20)
+- Documents in the database: ___ , different ids: ___ (must be equal)
+- The interrupted items came back after ___ s. Why that long:
+- Why nothing was doubled (one sentence, in my own words):
+
+### Dead-letter list
+
+| Stage (parse / extract / download / gave up) | Items | What I did |
+|---|---|---|
+| | | |
+
+### Live ingestion
+
+- InfraScribe on Render: ___ of 5 documents done, ___ failed. The reasons:
+- A request without the token gets status ___
+
+### Week 2 against Monday's estimate
+
+- docs/CAPACITY.md said: ___ pages, ___ tokens. docs/INGEST_REPORT.md says: ___ pages, ___ tokens
+- The difference, and why:
+
+### One thing that went wrong today, and how I fixed it
