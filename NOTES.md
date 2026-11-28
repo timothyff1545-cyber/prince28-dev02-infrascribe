@@ -355,33 +355,35 @@ I also tested Groq independently. It responded successfully, proving that the Gr
 **Next action:** Inspect the gateway's fallback handling for HTTP 429 and configure metadata extraction to use Groq without changing the primary model used by the normal chat application.
 
 
-### D10 · Queue and worker
+# D10 · Queue and worker
 
-- First run: ___ documents queued, finished in ___ s. Done ___ , skipped ___ , failed ___
-- Pace: ___ s per document (INGEST_RPM = ___ , INGEST_CONCURRENCY = ___ )
+- **First run:** 10 documents queued, finished in **53 s**. Done **10**, skipped **0**, failed **0**.
+- **Pace:** **5.3 s per document** (INGEST_RPM = not recorded, INGEST_CONCURRENCY = not confirmed; observed up to 2 running jobs simultaneously).
 
 ### Kill test
 
-- Queued: 20. At the kill: queued ___ , running ___ , done ___ , failed ___
-- After the new worker: done ___ + skipped ___ + failed ___ = ___ (must be 20)
-- Documents in the database: ___ , different ids: ___ (must be equal)
-- The interrupted items came back after ___ s. Why that long:
-- Why nothing was doubled (one sentence, in my own words):
+- Queued: 20. At the kill: queued **not recorded**, running **not recorded**, done **not recorded**, failed **not recorded**.
+- After the new worker: done **not recorded** + skipped **not recorded** + failed **not recorded** = **not verified (20 expected)**.
+- Documents in the database: **not recorded**, different IDs: **not recorded** (must be equal).
+- The interrupted items came back after **not measured**. Why that long: ARQ uses its job retry/recovery mechanism to recover unfinished jobs; the exact recovery time depends on the configured timeout and polling/retry settings.
+- Why nothing was doubled (one sentence, in my own words): **Not verified by a kill-test result yet.**
 
 ### Dead-letter list
 
 | Stage (parse / extract / download / gave up) | Items | What I did |
-|---|---|---|
-| | | |
+|---|---:|---|
+| No dead-letter results recorded | — | Needs verification |
 
 ### Live ingestion
 
-- InfraScribe on Render: ___ of 5 documents done, ___ failed. The reasons:
-- A request without the token gets status ___
+- InfraScribe on Render: **Not recorded** of 5 documents done, **not recorded** failed. The reasons: External Redis traffic was initially blocked by Render's Networking restrictions.
+- A request without the token gets status **not tested / not recorded**.
 
 ### Week 2 against Monday's estimate
 
-- docs/CAPACITY.md said: ___ pages, ___ tokens. docs/INGEST_REPORT.md says: ___ pages, ___ tokens
-- The difference, and why:
+- docs/CAPACITY.md said: **not recorded** pages, **not recorded** tokens. docs/INGEST_REPORT.md says: **not recorded** pages, **not recorded** tokens.
+- The difference, and why: **Pending comparison of the two reports.**
 
 ### One thing that went wrong today, and how I fixed it
+
+The ARQ worker could not connect to Render Key Value, resulting in a Redis connection timeout. The ingestion endpoint consequently returned HTTP 503 because it could not enqueue jobs. I identified that Render was blocking external traffic and that my laptop needed an allowed IP address and the external Redis connection URL. The local ingestion run subsequently returned HTTP 202 and completed all 10 queued documents successfully.
